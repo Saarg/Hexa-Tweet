@@ -1,6 +1,6 @@
 var express        	= require('express');
 var app            	= express();
-
+var hashtags        = ['javascript', 'socket.io'];
 var twitterCFG      = require('./config/twitter.js');
 
 // Serveur web =================================================================
@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
         else {
             highScore.player = data.pseudo;
             highScore.score = data.score;
-            socket.emit('message', 'Vous avez le nouveau record !');
+            socket.emit('message', 'Vous avez le nouveau record');
             socket.emit('highScore', highScore);
         }
     });
@@ -51,7 +51,7 @@ t.on('error', function (err) {
     console.error(err);
 })
 
-
-for (var i = 0; i < twitterCFG.hashtag.length; i++) {
-    t.track('twitterCFG.hashtag[i]');
+for (var i = 0; i < hashtags.length; i++) {
+    console.log("Now tracking " + hashtags[i]);
+    t.track(hashtags[i]);
 }
