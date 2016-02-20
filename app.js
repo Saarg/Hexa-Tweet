@@ -26,6 +26,7 @@ var Twitter = require('node-tweet-stream')
 var t = new Twitter(twitterCFG)
 
 t.on('tweet', function (tweet) {
+    console.log('newTweet');
     io.sockets.emit('newTweet', tweet.text)
 })
 

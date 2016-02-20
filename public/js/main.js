@@ -1,5 +1,5 @@
 // Init soxket.io ==============================================================
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('http://192.168.0.4:8080');
 
 // Init rendered ===============================================================
 var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0x1099bb});
@@ -22,7 +22,7 @@ socket.on('message', function(message) {
 });
 
 // Hexagone ====================================================================
-var newHexagon = function(x, y, tweet, fillColor, lineColor) {
+function newHexagon(tweet, fillColor, lineColor) {
     //hexagon
     var graphics = new PIXI.Graphics();
 
@@ -38,8 +38,10 @@ var newHexagon = function(x, y, tweet, fillColor, lineColor) {
 
     graphics.endFill();
 
-    graphics.position.x = x;
-    graphics.position.y = y;
+    graphics.interactive = true;
+    graphics.buttonMode = true;
+    graphics.hitArea = new PIXI.Rectangle(-75, -90, 150, 180);
+    graphics.on('mousedown', onClick);
 
     stage.addChild(graphics);
 
@@ -48,34 +50,45 @@ var newHexagon = function(x, y, tweet, fillColor, lineColor) {
 
     tweet.scale.x = 0.5;
     tweet.scale.y = 0.5;
-    tweet.x = x-tweet.width/2;
-    tweet.y = y-tweet.height/2;
+    tweet.x -= tweet.width/2;
+    tweet.y -= tweet.height/2;
 
-    stage.addChild(tweet);
+    graphics.addChild(tweet);
 
-    return {graphics: graphics, tweet: tweet}
+    return graphics;
 }
-var hexa = [];
-socket.on('newTweet', function(tweet) {
-    if(hexa/8 >= 3) { // si trop de tweets affiché on le signale au serveur
-        return;
-    }
 
-    var x = 300*(hexa.length%4) + 100;
-    var y = 90*parseInt(hexa.length/4) + 90;
-    if(hexa.length%8 > 3) {
-        x += 150;
+var hexa = [];
+
+socket.on('newTweet', function(tweet) {
+    if(hexa.length/4 >= 5) { // si trop de tweets affiché on le signale au serveur
+        return;
+    } else {
+        hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")))
     }
-    hexa.push(newHexagon(x, y, tweet.replace(/(.{13})/g, "$1\n")))
 });
 
 // Start animating =============================================================
-animate();
-
+requestAnimationFrame(animate);
 function animate() {
-
     requestAnimationFrame(animate);
+
+    // mise a jour de la position des tweets
+    for(var i = 0 ; i < hexa.length ; i++) {
+        var x = 300*(i%4) + 100;
+        var y = 90*parseInt(i/4) + 90;
+        if(i%8 > 3) {
+            x += 150;
+        }
+        hexa[i].position.x = x;
+        hexa[i].position.y = y;
+    }
 
     // render the root container
     renderer.render(stage);
 }
+
+function onClick() {
+    console.log(hexa.indexOf(this));
+    hexa.splice(hexa.indexOf(this), 1);
+};
