@@ -33,4 +33,5 @@ t.on('error', function (err) {
     console.error(err);
 })
 
-t.track('nodejs')
+t.track('socket.io');
+t.track('javascript');

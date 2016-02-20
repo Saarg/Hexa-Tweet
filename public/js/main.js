@@ -19,11 +19,11 @@ socket.on('message', function(message) {
     basicText.text = message
     basicText.x = renderer.width/2 - basicText.width/2;
     basicText.y = renderer.height - (basicText.height+10);
-
 });
 
 // Hexagone ====================================================================
-var newHexagon = function(x, y, fillColor, lineColor) {
+var newHexagon = function(x, y, tweet, fillColor, lineColor) {
+    //hexagon
     var graphics = new PIXI.Graphics();
 
     graphics.lineColor = lineColor || 0x000000;
@@ -42,8 +42,25 @@ var newHexagon = function(x, y, fillColor, lineColor) {
     graphics.position.y = y;
 
     stage.addChild(graphics);
+
+    // tweet
+    var tweet = new PIXI.Text(tweet);
+
+    tweet.scale.x = 0.5;
+    tweet.scale.y = 0.5;
+    tweet.x = x-tweet.width/2;
+    tweet.y = y-tweet.height/2;
+
+    stage.addChild(tweet);
+
+    return {graphics: graphics, tweet: tweet}
 }
-newHexagon(100, 100);
+var hexa = [];
+socket.on('newTweet', function(tweet) {
+    var x = 200*hexa.length + 100;
+    var y = 100;
+    hexa.push(newHexagon(x, y, tweet.replace(/(.{13})/g, "$1\n")))
+});
 
 // Start animating =============================================================
 animate();
