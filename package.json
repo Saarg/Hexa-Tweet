@@ -1,0 +1,13 @@
+{
+  "name": "Hexa-Tweet",
+  "version": "0.0.1",
+  "description": "Défis soixante circuits",
+  "main": "app.js",
+  "author": "Saarg",
+  "license": "MIT",
+  "dependencies": {
+      "express": "latest",
+      "socket.io": "latest",
+      "node-tweet-stream": "latest"
+  }
+}
