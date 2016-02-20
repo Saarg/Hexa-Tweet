@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
         else {
             highScore.player = data.pseudo;
             highScore.score = data.score;
-            socket.emit('message', 'Vous avez le nouveau record');
+            socket.emit('message', 'Vous avez le nouveau record !');
             socket.emit('highScore', highScore);
         }
     });
@@ -51,5 +51,7 @@ t.on('error', function (err) {
     console.error(err);
 })
 
-t.track('socket.io');
-t.track('javascript');
+
+for (var i = 0; i < twitterCFG.hashtag.length; i++) {
+    t.track('twitterCFG.hashtag[i]');
+}
