@@ -20,3 +20,17 @@ var io = require('socket.io')(server);
 io.sockets.on('connection', function (socket) {
     socket.emit('message', 'Vous êtes bien connecté !');
 });
+
+// Affichage des tweets
+var Twitter = require('node-tweet-stream')
+var t = new Twitter(twitterCFG)
+
+t.on('tweet', function (tweet) {
+    io.emit('newTweet', tweet.text)
+})
+
+t.on('error', function (err) {
+    console.error(err);
+})
+
+t.track('nodejs')

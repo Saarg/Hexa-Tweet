@@ -1,40 +1,51 @@
+// Init soxket.io ==============================================================
 var socket = io.connect('http://localhost:8080');
-socket.on('message', function(message) {
-    alert(message)
-});
 
-var renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});
+// Init rendered ===============================================================
+var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0x1099bb});
 document.body.appendChild(renderer.view);
 
-// create the root of the scene graph
+// Create the root of the scene graph ==========================================
 var stage = new PIXI.Container();
 
+// Message =====================================================================
 var basicText = new PIXI.Text('Basic text in pixi');
-basicText.x = 30;
-basicText.y = 90;
+basicText.x = renderer.width/2 - basicText.width/2;
+basicText.y = renderer.height - (basicText.height+10) ;
 
 stage.addChild(basicText);
 
-var style = {
-    font : 'bold italic 36px Arial',
-    fill : '#F7EDCA',
-    stroke : '#4a1850',
-    strokeThickness : 5,
-    dropShadow : true,
-    dropShadowColor : '#000000',
-    dropShadowAngle : Math.PI / 6,
-    dropShadowDistance : 6,
-    wordWrap : true,
-    wordWrapWidth : 440
-};
+socket.on('message', function(message) {
+    basicText.text = message
+    basicText.x = renderer.width/2 - basicText.width/2;
+    basicText.y = renderer.height - (basicText.height+10);
 
-var richText = new PIXI.Text('Rich text with a lot of options and across multiple lines',style);
-richText.x = 30;
-richText.y = 180;
+});
 
-stage.addChild(richText);
+// Hexagone ====================================================================
+var newHexagon = function(x, y, fillColor, lineColor) {
+    var graphics = new PIXI.Graphics();
 
-// start animating
+    graphics.lineColor = lineColor || 0x000000;
+    graphics.lineWidth = 1;
+
+    graphics.beginFill(fillColor || 0xFFFFFF);
+
+    graphics.moveTo(100,0);
+    for(var i = 1 ; i <= 6 ; i++){
+        graphics.lineTo(100*Math.cos(i*Math.PI/3), 100*Math.sin(i*Math.PI/3));
+    }
+
+    graphics.endFill();
+
+    graphics.position.x = x;
+    graphics.position.y = y;
+
+    stage.addChild(graphics);
+}
+newHexagon(100, 100);
+
+// Start animating =============================================================
 animate();
 
 function animate() {
