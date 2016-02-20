@@ -9,17 +9,32 @@ document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 
 // Message =====================================================================
-var basicText = new PIXI.Text('Basic text in pixi');
-basicText.x = renderer.width/2 - basicText.width/2;
-basicText.y = renderer.height - (basicText.height+10) ;
+var HUD_message = new PIXI.Text('En attente du serveur');
+HUD_message.x = renderer.width/2 - HUD_message.width/2;
+HUD_message.y = renderer.height - (HUD_message.height+10) ;
 
-stage.addChild(basicText);
+stage.addChild(HUD_message);
 
-socket.on('message', function(message) {
-    basicText.text = message
-    basicText.x = renderer.width/2 - basicText.width/2;
-    basicText.y = renderer.height - (basicText.height+10);
-});
+// Score =======================================================================
+var HUD_score = new PIXI.Text('Score:0');
+HUD_score.score = 0;
+HUD_score.x = 10;
+HUD_score.y = renderer.height - (HUD_score.height+10) ;
+HUD_score.addScore = function(s) {
+    HUD_score.score += s;
+    HUD_score.text = 'Score:'+HUD_score.score;
+};
+
+stage.addChild(HUD_score);
+
+// HighScore ===================================================================
+var HUD_highScore = new PIXI.Text('Machin:0');
+HUD_highScore.player = "machin";
+HUD_highScore.score = 0;
+HUD_highScore.x = (renderer.width-10) - HUD_highScore.width;
+HUD_highScore.y = renderer.height - (HUD_highScore.height+10) ;
+
+stage.addChild(HUD_highScore);
 
 // Hexagone ====================================================================
 function newHexagon(tweet, fillColor, lineColor) {
@@ -59,12 +74,15 @@ function newHexagon(tweet, fillColor, lineColor) {
 }
 
 var hexa = [];
+var running = true;
 
 socket.on('newTweet', function(tweet) {
-    if(hexa.length/4 >= 5) { // si trop de tweets affiché on le signale au serveur
-        return;
-    } else {
-        hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")))
+    if(running){
+        if(hexa.length/4 >= 1) {
+            loose();
+        } else {
+            hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")))
+        }
     }
 });
 
@@ -88,7 +106,27 @@ function animate() {
     renderer.render(stage);
 }
 
+// Interactions with user ======================================================
 function onClick() {
-    console.log(hexa.indexOf(this));
+    HUD_score.addScore(1);
+
     hexa.splice(hexa.indexOf(this), 1);
 };
+
+// Interactions from server ====================================================
+socket.on('message', function(message) {
+    HUD_message.text = message
+    HUD_message.x = renderer.width/2 - HUD_message.width/2;
+    HUD_message.y = renderer.height - (HUD_message.height+10);
+});
+socket.on('highScore', function(highScore) {
+    HUD_highScore.player = highScore.player;
+    HUD_highScore.score = highScore.score;
+    HUD_highScore.text = HUD_highScore.player+":"+HUD_highScore.score;
+});
+// Interactions to server ======================================================
+function loose() {
+    running = false;
+    var pseudo = prompt('Quel est votre pseudo ?');
+    socket.emit("loose", {score: HUD_score.score, pseudo: 'jean'})
+}
