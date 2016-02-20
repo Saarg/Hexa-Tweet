@@ -57,8 +57,15 @@ var newHexagon = function(x, y, tweet, fillColor, lineColor) {
 }
 var hexa = [];
 socket.on('newTweet', function(tweet) {
-    var x = 200*hexa.length + 100;
-    var y = 100;
+    if(hexa/8 >= 3) { // si trop de tweets affiché on le signale au serveur
+        return;
+    }
+
+    var x = 300*(hexa.length%4) + 100;
+    var y = 90*parseInt(hexa.length/4) + 90;
+    if(hexa.length%8 > 3) {
+        x += 150;
+    }
     hexa.push(newHexagon(x, y, tweet.replace(/(.{13})/g, "$1\n")))
 });
 
