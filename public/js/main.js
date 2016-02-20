@@ -1,8 +1,8 @@
 // Init soxket.io ==============================================================
-var socket = io.connect('http://192.168.0.4:8080');
+var socket = io.connect('http://localhost:8080');
 
 // Init rendered ===============================================================
-var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0x1099bb});
+var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0x777777, clearBeforeRender: true});
 document.body.appendChild(renderer.view);
 
 // Create the root of the scene graph ==========================================
@@ -32,7 +32,7 @@ var HUD_highScore = new PIXI.Text('Machin:0');
 HUD_highScore.player = "machin";
 HUD_highScore.score = 0;
 HUD_highScore.x = (renderer.width-10) - HUD_highScore.width;
-HUD_highScore.y = renderer.height - (HUD_highScore.height+10) ;
+HUD_highScore.y = renderer.height - (HUD_highScore.height+10);
 
 stage.addChild(HUD_highScore);
 
@@ -60,6 +60,8 @@ function newHexagon(tweet, fillColor, lineColor) {
 
     stage.addChild(graphics);
 
+    graphics.color = 0xFF0000;
+
     // tweet
     var tweet = new PIXI.Text(tweet);
 
@@ -69,16 +71,18 @@ function newHexagon(tweet, fillColor, lineColor) {
     tweet.y -= tweet.height/2;
 
     graphics.addChild(tweet);
+    graphics.tweetIndex = graphics.getChildIndex(tweet);
 
     return graphics;
 }
 
 var hexa = [];
+var destroy = [];
 var running = true;
 
 socket.on('newTweet', function(tweet) {
     if(running){
-        if(hexa.length/4 >= 1) {
+        if(hexa.length/4 >= 5) {
             loose();
         } else {
             hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")))
@@ -101,6 +105,13 @@ function animate() {
         hexa[i].position.x = x;
         hexa[i].position.y = y;
     }
+    for(var i = 0 ; i < destroy.length ; i++) {
+        destroy[i].position.y += 5;
+        destroy[i].rotation += 0.1;
+        if(destroy[i].position.y > renderer.width) {
+            destroy.splice(i, 1);
+        }
+    }
 
     // render the root container
     renderer.render(stage);
@@ -110,6 +121,7 @@ function animate() {
 function onClick() {
     HUD_score.addScore(1);
 
+    destroy.push(this);
     hexa.splice(hexa.indexOf(this), 1);
 };
 
@@ -123,10 +135,17 @@ socket.on('highScore', function(highScore) {
     HUD_highScore.player = highScore.player;
     HUD_highScore.score = highScore.score;
     HUD_highScore.text = HUD_highScore.player+":"+HUD_highScore.score;
+    HUD_highScore.x = (renderer.width-10) - HUD_highScore.width;
+    HUD_highScore.y = renderer.height - (HUD_highScore.height+10);
 });
 // Interactions to server ======================================================
 function loose() {
     running = false;
     var pseudo = prompt('Quel est votre pseudo ?');
-    socket.emit("loose", {score: HUD_score.score, pseudo: 'jean'})
+    socket.emit("loose", {score: HUD_score.score, pseudo: pseudo});
+
+    var restart = confirm('Relancer Hexa-Tweet ?');
+    if(restart) {
+        location.reload();
+    }
 }

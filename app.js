@@ -16,7 +16,7 @@ var server = app.listen(port);
 console.log('Magic happens on port ' + port);
 
 // Game variables ==============================================================
-var highScore = {player: "dédé", score: 0};
+var highScore = {player: "personne", score: 0};
 
 // Socket.io ===================================================================
 var io = require('socket.io')(server);
@@ -43,7 +43,6 @@ var Twitter = require('node-tweet-stream')
 var t = new Twitter(twitterCFG)
 
 t.on('tweet', function (tweet) {
-    console.log('newTweet');
     io.sockets.emit('newTweet', tweet.text)
 })
 
