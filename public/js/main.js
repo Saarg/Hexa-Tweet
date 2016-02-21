@@ -72,6 +72,7 @@ function newHexagon(tweet, fillColor, lineColor) {
 
     graphics.addChild(tweet);
     graphics.tweetIndex = graphics.getChildIndex(tweet);
+    graphics.clicks = 0;
 
     return graphics;
 }
@@ -106,8 +107,8 @@ function animate() {
         hexa[i].position.y = y;
     }
     for(var i = 0 ; i < destroy.length ; i++) {
-        destroy[i].position.y += 5;
-        destroy[i].rotation += 0.1;
+        destroy[i].position.y += 5*destroy[i].clicks;
+        destroy[i].rotation += 0.1*destroy[i].clicks;
         if(destroy[i].position.y > renderer.width) {
             destroy.splice(i, 1);
         }
@@ -121,8 +122,12 @@ function animate() {
 function onClick() {
     HUD_score.addScore(1);
 
-    destroy.push(this);
-    hexa.splice(hexa.indexOf(this), 1);
+    this.clicks += 1;
+
+    if(hexa.indexOf(this) != -1) {
+        destroy.push(this);
+        hexa.splice(hexa.indexOf(this), 1);
+    }
 };
 
 // Interactions from server ====================================================
