@@ -113,6 +113,7 @@ function animate() {
         destroy[i].position.y += 5*destroy[i].clicks;
         destroy[i].rotation += 0.1*destroy[i].clicks;
         if(destroy[i].position.y > renderer.width) {
+            stage.removeChild(destroy[i]);
             destroy.splice(i, 1);
         }
     }
