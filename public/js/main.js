@@ -24,6 +24,10 @@ HUD_score.addScore = function(s) {
     HUD_score.score += s;
     HUD_score.text = 'Score:'+HUD_score.score;
 };
+HUD_score.reset = function() {
+    HUD_score.score = 0;
+    HUD_score.text = 'Score:'+HUD_score.score;
+};
 
 stage.addChild(HUD_score);
 
@@ -120,11 +124,14 @@ function animate() {
 
 // Interactions with user ======================================================
 function onClick() {
-    HUD_score.addScore(1);
-
+    // first click gives no point and click n gives n points
+    HUD_score.addScore(this.clicks);
     this.clicks += 1;
 
     if(hexa.indexOf(this) != -1) {
+        // show the tweet in front of the others
+        stage.removeChild(this);
+        stage.addChild(this);
         destroy.push(this);
         hexa.splice(hexa.indexOf(this), 1);
     }
@@ -148,9 +155,4 @@ function loose() {
     running = false;
     var pseudo = prompt('Quel est votre pseudo ?');
     socket.emit("loose", {score: HUD_score.score, pseudo: pseudo});
-
-    var restart = confirm('Relancer Hexa-Tweet ?');
-    if(restart) {
-        location.reload();
-    }
 }
