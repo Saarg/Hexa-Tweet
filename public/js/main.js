@@ -1,5 +1,5 @@
 // Init soxket.io ==============================================================
-var socket = io.connect('http://192.168.0.4:8080');
+var socket = io.connect('http://localhost:8080');
 
 // Init rendered ===============================================================
 var renderer = PIXI.autoDetectRenderer(document.getElementById("gameView").offsetWidth-40, 720,{backgroundColor : 0xF0F0F0, clearBeforeRender: true});
