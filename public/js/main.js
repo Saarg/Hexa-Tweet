@@ -8,7 +8,6 @@ document.getElementById("gameView").appendChild(renderer.view);
 // Create the root of the scene graph ==========================================
 var stage = new PIXI.Container();
 var nbHex = parseInt(renderer.width/300);
-console.log(nbHex);
 
 // Message =====================================================================
 var HUD_message = new PIXI.Text('En attente du serveur');
@@ -100,7 +99,7 @@ requestAnimationFrame(animate);
 function animate() {
     requestAnimationFrame(animate);
 
-    // mise a jour de la position des tweets
+    // update teewts position
     for(var i = 0 ; i < hexa.length ; i++) {
         var x = 300*(i%nbHex) + 100;
         var y = 90*parseInt(i/nbHex) + 90;
@@ -155,4 +154,16 @@ function loose() {
     running = false;
     var pseudo = prompt('Quel est votre pseudo ?');
     socket.emit("loose", {score: HUD_score.score, pseudo: pseudo});
+}
+
+function restart() {
+    for(var i = 0 ; i < hexa.length ; i++) {
+        // destroy all tweets
+        stage.removeChild(hexa[i]);
+        hexa[i].clicks = 1;
+        destroy.push(hexa[i]);
+        stage.addChild(hexa[i]);
+    }
+    hexa.length = 0;
+    HUD_score.reset();
 }
