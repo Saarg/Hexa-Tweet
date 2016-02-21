@@ -2,6 +2,12 @@
 Affichage de tweets dans des hexagones dans le cadre d'un défi posé par soixante circuits
 J'ai prévu de réaliser le défi dans le week-end samedi après-midi et si possible dimanche après-midi. Soit environ une douzaine d'heures.
 
+# Installer et lancer Hexa-Tweet
+1. Recuperer les sources de ce dépot git
+2. Installer les modules ```npm install ```
+3. Démarrer le serveur: ```node app.js```
+4. ```http://localhost:8080```
+
 # Énoncé
 ```
 Vous devez créer une interface qui affiche en temps réel les tweets qui contiennent un hashtag défini dans un fichier de configuration. 
