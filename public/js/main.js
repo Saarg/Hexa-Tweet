@@ -167,4 +167,5 @@ function restart() {
     }
     hexa.length = 0;
     HUD_score.reset();
+    running = true;
 }
