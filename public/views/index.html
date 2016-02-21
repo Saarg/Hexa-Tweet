@@ -3,8 +3,25 @@
     <head
         <meta charset="utf-8" />
         <title>Hexa-Tweet</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
     </head>
     <body>
+        <div id="gameView" class="col-md-10 col-sm-12 well">
+        </div>
+        <div id="instructions" class="col-md-2 col-sm-12 well pull-right">
+            <h1>Hexa-Tweet</h1>
+            <p>
+                Le but est de détruire les tweets en cliquant dessus avant que l'écran soit remplis de tweet.<br/>
+                Une fois que le tweet commence sa course vers le bas de l'écran, dans cet état chaques cliques sur les tweets apporte des points au joueur.<br/>
+                Une fois que votre ecran est remplis de tweets vous avez perdu, il ne vous reste plus qu'a entrer votre nom pour enregistrer votre score.<br/>
+            </p>
+        </div>
+        <div id="sources" class="col-md-2 col-sm-12 well pull-right">
+            <h1>Sources</h1>
+            <p>
+                Les sources sont sur <a href="https://github.com/Saarg/Hexa-Tweet">github</a>
+            </p>
+        </div>
     </body>
 
     <script src="/socket.io/socket.io.js"></script>

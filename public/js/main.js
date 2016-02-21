@@ -1,12 +1,14 @@
 // Init soxket.io ==============================================================
-var socket = io.connect('http://localhost:8080');
+var socket = io.connect('http://192.168.0.4:8080');
 
 // Init rendered ===============================================================
-var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0xF0F0F0, clearBeforeRender: true});
+var renderer = PIXI.autoDetectRenderer(document.getElementById("gameView").offsetWidth-40, 720,{backgroundColor : 0xF0F0F0, clearBeforeRender: true});
 document.getElementById("gameView").appendChild(renderer.view);
 
 // Create the root of the scene graph ==========================================
 var stage = new PIXI.Container();
+var nbHex = parseInt(renderer.width/300);
+console.log(nbHex);
 
 // Message =====================================================================
 var HUD_message = new PIXI.Text('En attente du serveur');
@@ -85,7 +87,7 @@ var running = true;
 
 socket.on('newTweet', function(tweet) {
     if(running){
-        if(hexa.length/4 >= 5) {
+        if(hexa.length/nbHex >= 5) {
             loose();
         } else {
             hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")));
@@ -100,9 +102,9 @@ function animate() {
 
     // mise a jour de la position des tweets
     for(var i = 0 ; i < hexa.length ; i++) {
-        var x = 300*(i%4) + 100;
-        var y = 90*parseInt(i/4) + 90;
-        if(i%8 > 3) {
+        var x = 300*(i%nbHex) + 100;
+        var y = 90*parseInt(i/nbHex) + 90;
+        if(i%(2*nbHex) > nbHex-1) {
             x += 150;
         }
         hexa[i].position.x = x;
