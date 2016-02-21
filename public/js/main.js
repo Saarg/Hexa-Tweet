@@ -2,8 +2,8 @@
 var socket = io.connect('http://localhost:8080');
 
 // Init rendered ===============================================================
-var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0x777777, clearBeforeRender: true});
-document.body.appendChild(renderer.view);
+var renderer = PIXI.autoDetectRenderer(1280, 720,{backgroundColor : 0xF0F0F0, clearBeforeRender: true});
+document.getElementById("gameView").appendChild(renderer.view);
 
 // Create the root of the scene graph ==========================================
 var stage = new PIXI.Container();
@@ -45,8 +45,7 @@ function newHexagon(tweet, fillColor, lineColor) {
     //hexagon
     var graphics = new PIXI.Graphics();
 
-    graphics.lineColor = lineColor || 0x000000;
-    graphics.lineWidth = 1;
+    graphics.lineStyle(1, lineColor || 0x000000, 1);
 
     graphics.beginFill(fillColor || 0xFFFFFF);
 
@@ -61,10 +60,9 @@ function newHexagon(tweet, fillColor, lineColor) {
     graphics.buttonMode = true;
     graphics.hitArea = new PIXI.Rectangle(-75, -90, 150, 180);
     graphics.on('mousedown', onClick);
+    graphics.on('touchstart', onClick);
 
     stage.addChild(graphics);
-
-    graphics.color = 0xFF0000;
 
     // tweet
     var tweet = new PIXI.Text(tweet);
@@ -90,7 +88,7 @@ socket.on('newTweet', function(tweet) {
         if(hexa.length/4 >= 5) {
             loose();
         } else {
-            hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")))
+            hexa.push(newHexagon(tweet.replace(/(.{13})/g, "$1\n")));
         }
     }
 });
