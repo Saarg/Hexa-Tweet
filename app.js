@@ -1,10 +1,11 @@
 var express        	= require('express');
 var app            	= express();
-var hashtags        = ['javascript', 'socket.io'];
+var hashtags        = ['AvengersFrance'];
 var twitterCFG      = require('./config/twitter.js');
 
 // Serveur web =================================================================
 var port = process.env.PORT || 8080;
+var co = 0;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -24,6 +25,9 @@ var io = require('socket.io')(server);
 io.sockets.on('connection', function (socket) {
     socket.emit('message', 'Vous êtes bien connecté !');
     socket.emit('highScore', highScore);
+    co++;
+    if(co%10 == 0)
+        console.log(co+" utilisateurs depuis le debut.");
 
     socket.on('loose', function(data) {
         console.log(data.pseudo + " a perdu avec un score de " + data.score);
